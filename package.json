@@ -2,7 +2,7 @@
   "name": "switch2webstorm",
   "displayName": "Switch2WebStorm",
   "description": "Quickly switch between VS Code and WebStorm, open current file in WebStorm with the same position",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publisher": "jayep",
   "license": "MIT",
   "repository": {
