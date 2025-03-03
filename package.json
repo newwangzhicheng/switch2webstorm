@@ -1,13 +1,13 @@
 {
-  "name": "switch2idea",
-  "displayName": "Switch2IDEA",
-  "description": "Quickly switch between VS Code and IntelliJ IDEA, open current file in IDEA with the same position",
+  "name": "switch2webstorm",
+  "displayName": "Switch2WebStorm",
+  "description": "Quickly switch between VS Code and WebStorm, open current file in WebStorm with the same position",
   "version": "1.0.3",
-  "publisher": "qczone",
+  "publisher": "jayep",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qczone/switch2idea"
+    "url": "https://github.com/jayep/switch2webstorm"
   },
   "icon": "images/icon.png",
   "engines": {
@@ -18,8 +18,7 @@
     "Programming Languages"
   ],
   "keywords": [
-    "intellij",
-    "idea",
+    "webstorm",
     "jetbrains",
     "switch",
     "open"
@@ -31,51 +30,51 @@
   "contributes": {
     "commands": [
       {
-        "command": "Switch2IDEA.openFileInIDEA",
-        "title": "Open File in IDEA"
+        "command": "Switch2WebStorm.openFileInWebStorm",
+        "title": "Open File in WebStorm"
       },
       {
-        "command": "Switch2IDEA.openProjectInIDEA",
-        "title": "Open Project in IDEA"
+        "command": "Switch2WebStorm.openProjectInWebStorm",
+        "title": "Open Project in WebStorm"
       }
     ],
     "keybindings": [
       {
-        "command": "Switch2IDEA.openFileInIDEA",
+        "command": "Switch2WebStorm.openFileInWebStorm",
         "key": "alt+shift+o",
         "mac": "alt+shift+o",
         "when": "editorTextFocus"
       },
       {
-        "command": "Switch2IDEA.openProjectInIDEA",
+        "command": "Switch2WebStorm.openProjectInWebStorm",
         "key": "alt+shift+p",
         "mac": "alt+shift+p"
       }
     ],
     "configuration": {
-      "title": "Switch2IDEA",
+      "title": "Switch2WebStorm",
       "properties": {
-        "switch2idea.ideaPath": {
+        "switch2webstorm.webstormPath": {
           "type": "string",
           "default": "",
-          "description": "IDEA executable path"
+          "description": "WebStorm executable path"
         }
       }
     },
     "menus": {
       "editor/context": [
         {
-          "command": "Switch2IDEA.openFileInIDEA",
+          "command": "Switch2WebStorm.openFileInWebStorm",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "Switch2IDEA.openFileInIDEA",
+          "command": "Switch2WebStorm.openFileInWebStorm",
           "group": "navigation"
         },
         {
-          "command": "Switch2IDEA.openProjectInIDEA",
+          "command": "Switch2WebStorm.openProjectInWebStorm",
           "group": "navigation"
         }
       ]

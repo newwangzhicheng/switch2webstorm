@@ -3,33 +3,33 @@ import { exec } from 'child_process';
 import * as os from 'os';
 import * as fs from 'fs';
 
-function getMacIdeaPath(): string {
+function getMacWebStormPath(): string {
 	const commonPaths = [
-		'/Applications/IDEA.app',
-		'/Applications/IntelliJ IDEA.app',
-		'/Applications/IntelliJ IDEA CE.app',
-		'/Applications/IntelliJ IDEA Ultimate.app',
-		'/Applications/IntelliJ IDEA Community Edition.app', 
-		`${os.homedir()}/Applications/IDEA.app`,
-		`${os.homedir()}/Applications/IntelliJ IDEA.app`,
-		`${os.homedir()}/Applications/IntelliJ IDEA CE.app`,
-		`${os.homedir()}/Applications/IntelliJ IDEA Ultimate.app`,
-		`${os.homedir()}/Applications/IntelliJ IDEA Community Edition.app`,
+		'/Applications/WebStorm.app',
+		'/Applications/IntelliJ WebStorm.app',
+		'/Applications/IntelliJ WebStorm CE.app',
+		'/Applications/IntelliJ WebStorm Ultimate.app',
+		'/Applications/IntelliJ WebStorm Community Edition.app', 
+		`${os.homedir()}/Applications/WebStorm.app`,
+		`${os.homedir()}/Applications/IntelliJ WebStorm.app`,
+		`${os.homedir()}/Applications/IntelliJ WebStorm CE.app`,
+		`${os.homedir()}/Applications/IntelliJ WebStorm Ultimate.app`,
+		`${os.homedir()}/Applications/IntelliJ WebStorm Community Edition.app`,
 	];
 
-	// Iterate through all possible IDEA installation paths and return the first existing path
+	// Iterate through all possible WebStorm installation paths and return the first existing path
 	for (const path of commonPaths) {
 		if (fs.existsSync(path)) {
 			return path;
 		}
 	}
 	// If no paths exist, return the default APP name
-	return 'IntelliJ IDEA';
+	return 'WebStorm';
 }
 
 function executeCommand(command: string): Promise<void> {
 	return new Promise((resolve, reject) => {
-		const childProcess = exec(command, (error, stdout, stderr) => {
+		const childProcess = exec(command, (error: Error | null, stdout: string, stderr: string) => {
 			if (error) {
 				console.error('Error executing command:', error);
 				console.error('Stderr:', stderr);
@@ -48,8 +48,8 @@ function executeCommand(command: string): Promise<void> {
 		// Add error handling
 		childProcess.on('error', (error: NodeJS.ErrnoException) => {
 			if (error.code === 'EPIPE') {
-				console.log('Pipe communication disconnected, but this may not affect IDEA startup');
-				resolve(); // Continue execution as IDEA may have started normally
+				console.log('Pipe communication disconnected, but this may not affect WebStorm startup');
+				resolve(); // Continue execution as WebStorm may have started normally
 			} else {
 				reject(error);
 			}
@@ -59,9 +59,9 @@ function executeCommand(command: string): Promise<void> {
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('Switch2IDEA is now active!');
+	console.log('Switch2WebStorm is now active!');
 
-	let openFileDisposable = vscode.commands.registerCommand('Switch2IDEA.openFileInIDEA', async (uri?: vscode.Uri) => {
+	let openFileDisposable = vscode.commands.registerCommand('Switch2WebStorm.openFileInWebStorm', async (uri?: vscode.Uri) => {
 		let filePath: string;
 		let line = 1;
 		let column = 1;
@@ -84,27 +84,27 @@ export function activate(context: vscode.ExtensionContext) {
 			column = editor.selection.active.character;
 		}
 
-		const config = vscode.workspace.getConfiguration('switch2idea');
-		let ideaPath = config.get<string>('ideaPath');
+		const config = vscode.workspace.getConfiguration('switch2webstorm');
+		let webstormPath = config.get<string>('webstormPath');
 
-		if (!ideaPath) {
+		if (!webstormPath) {
 			if (os.platform() === 'darwin') {
-				ideaPath = getMacIdeaPath();
+				webstormPath = getMacWebStormPath();
 			} else if (os.platform() === 'win32') {
-				ideaPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA\\bin\\idea64.exe';
+				webstormPath = 'C:\\Program Files\\JetBrains\\WebStorm\\bin\\webstorm64.exe';
 			} else {
-				ideaPath = 'idea';
+				webstormPath = 'webstorm';
 			}
 		}
 
 		let command: string;
 		if (os.platform() === 'darwin') {
-			const ideaUrl = `idea://open?file=${encodeURIComponent(filePath)}&line=${line}&column=${column}`;
-			// If IDEA is already open, using the 'idea' command will show two IDEA icons in the dock temporarily
+			const webstormUrl = `webstorm://open?file=${encodeURIComponent(filePath)}&line=${line}&column=${column}`;
+			// If WebStorm is already open, using the 'webstorm' command will show two WebStorm icons in the dock temporarily
 			// Using the 'open' command instead will prevent this issue
-			command = `open -a "${ideaPath}" "${ideaUrl}"`;
+			command = `open -a "${webstormPath}" "${webstormUrl}"`;
 		} else {
-			command = `"${ideaPath}" --line ${line} --column ${column} "${filePath}"`;
+			command = `"${webstormPath}" --line ${line} --column ${column} "${filePath}"`;
 		}
 
 		console.log('Executing command:', command);
@@ -113,11 +113,11 @@ export function activate(context: vscode.ExtensionContext) {
 			await executeCommand(command);
 		} catch (error) {
 			const err = error as Error;
-			vscode.window.showErrorMessage(`Failed to open IDEA: ${err.message}`);
+			vscode.window.showErrorMessage(`Failed to open WebStorm: ${err.message}`);
 		}
 	});
 
-	let openProjectDisposable = vscode.commands.registerCommand('Switch2IDEA.openProjectInIDEA', async () => {
+	let openProjectDisposable = vscode.commands.registerCommand('Switch2WebStorm.openProjectInWebStorm', async () => {
 		const workspaceFolders = vscode.workspace.workspaceFolders;
 		if (!workspaceFolders || workspaceFolders.length === 0) {
 			vscode.window.showErrorMessage('No workspace folder is opened!');
@@ -126,26 +126,26 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const projectPath = workspaceFolders[0].uri.fsPath;
 
-		const config = vscode.workspace.getConfiguration('switch2idea');
-		let ideaPath = config.get<string>('ideaPath');
+		const config = vscode.workspace.getConfiguration('switch2webstorm');
+		let webstormPath = config.get<string>('webstormPath');
 
-		if (!ideaPath) {
+		if (!webstormPath) {
 			if (os.platform() === 'darwin') {
-				const macIdeaPath = getMacIdeaPath();
-				ideaPath = macIdeaPath || 'IntelliJ IDEA';
+				const macWebStormPath = getMacWebStormPath();
+				webstormPath = macWebStormPath || 'WebStorm';
 			} else if (os.platform() === 'win32') {
-				ideaPath = 'C:\\Program Files\\JetBrains\\IntelliJ IDEA\\bin\\idea64.exe';
+				webstormPath = 'C:\\Program Files\\JetBrains\\WebStorm\\bin\\webstorm64.exe';
 			} else {
-				ideaPath = 'idea';
+				webstormPath = 'webstorm';
 			}
 		}
 
 		let command: string;
 		if (os.platform() === 'darwin') {
-			const ideaUrl = `idea://open?file=${encodeURIComponent(projectPath)}`;
-			command = `open -a "${ideaPath}" "${ideaUrl}"`;
+			const webstormUrl = `webstorm://open?file=${encodeURIComponent(projectPath)}`;
+			command = `open -a "${webstormPath}" "${webstormUrl}"`;
 		} else {
-			command = `"${ideaPath}" "${projectPath}"`;
+			command = `"${webstormPath}" "${projectPath}"`;
 		}
 
 		console.log('Executing command:', command);
@@ -154,7 +154,7 @@ export function activate(context: vscode.ExtensionContext) {
 			await executeCommand(command);
 		} catch (error) {
 			const err = error as Error;
-			vscode.window.showErrorMessage(`Failed to open project in IDEA: ${err.message}`);
+			vscode.window.showErrorMessage(`Failed to open project in WebStorm: ${err.message}`);
 		}
 	});
 

@@ -4,11 +4,11 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 
-suite('Switch2IDEA Extension Test Suite', () => {
+suite('Switch2WebStorm Extension Test Suite', () => {
 	// 在所有测试开始前激活扩展
 	suiteSetup(async () => {
 		// 等待扩展激活
-		const extension = vscode.extensions.getExtension('qczone.switch2idea');
+		const extension = vscode.extensions.getExtension('jayep.switch2webstorm');
 		if (extension) {
 			if (!extension.isActive) {
 				await extension.activate();
@@ -18,7 +18,7 @@ suite('Switch2IDEA Extension Test Suite', () => {
 
 	test('Extension should be present', async () => {
 		// 获取扩展并等待激活
-		const extension = vscode.extensions.getExtension('qczone.switch2idea');
+		const extension = vscode.extensions.getExtension('jayep.switch2webstorm');
 		assert.ok(extension, 'Extension should be installed');
 		
 		if (!extension.isActive) {
@@ -27,16 +27,16 @@ suite('Switch2IDEA Extension Test Suite', () => {
 		assert.ok(extension.isActive, 'Extension should be activated');
 	});
 
-	test('Should register open in IDEA command', () => {
+	test('Should register open in WebStorm command', () => {
 		const commands = vscode.commands.getCommands(true);
-		return commands.then((cmds) => {
-			assert.ok(cmds.includes('Switch2IDEA.openInIDEA'));
+		return commands.then((cmds: string[]) => {
+			assert.ok(cmds.includes('Switch2WebStorm.openFileInWebStorm'));
 		});
 	});
 
 	test('Should have correct configuration', () => {
-		const config = vscode.workspace.getConfiguration('switch2idea');
-		assert.ok(config.has('ideaPath'));
+		const config = vscode.workspace.getConfiguration('switch2webstorm');
+		assert.ok(config.has('webstormPath'));
 		assert.ok(config.has('keyboardShortcut'));
 		assert.strictEqual(config.get('keyboardShortcut'), 'alt+shift+o');
 	});
@@ -56,10 +56,10 @@ suite('Switch2IDEA Extension Test Suite', () => {
 			const editor = await vscode.window.showTextDocument(doc);
 
 			// Execute command
-			await vscode.commands.executeCommand('Switch2IDEA.openInIDEA');
+			await vscode.commands.executeCommand('Switch2WebStorm.openFileInWebStorm');
 
 			// Verify command execution completed without errors
-			// Note: We cannot verify if IDEA actually opened the file as it's an external process
+			// Note: We cannot verify if WebStorm actually opened the file as it's an external process
 			assert.ok(true);
 		} finally {
 			// Cleanup test file
@@ -90,7 +90,7 @@ suite('Switch2IDEA Extension Test Suite', () => {
 			editor.selection = new vscode.Selection(position, position);
 
 			// Execute command
-			await vscode.commands.executeCommand('Switch2IDEA.openInIDEA');
+			await vscode.commands.executeCommand('Switch2WebStorm.openFileInWebStorm');
 
 			// Verify command execution completed without errors
 			assert.ok(true);
@@ -104,22 +104,22 @@ suite('Switch2IDEA Extension Test Suite', () => {
 		}
 	});
 
-	test('Should handle non-existent ideaPath gracefully', async () => {
-		// Temporarily set a non-existent ideaPath
-		const config = vscode.workspace.getConfiguration('switch2idea');
-		const originalPath = config.get('ideaPath');
+	test('Should handle non-existent webstormPath gracefully', async () => {
+		// Temporarily set a non-existent webstormPath
+		const config = vscode.workspace.getConfiguration('switch2webstorm');
+		const originalPath = config.get('webstormPath');
 		
 		try {
-			await config.update('ideaPath', 'non-existent-path', vscode.ConfigurationTarget.Global);
+			await config.update('webstormPath', 'non-existent-path', vscode.ConfigurationTarget.Global);
 			
 			// Execute command
-			await vscode.commands.executeCommand('Switch2IDEA.openInIDEA');
+			await vscode.commands.executeCommand('Switch2WebStorm.openFileInWebStorm');
 			
 			// Command should complete without crashing
 			assert.ok(true);
 		} finally {
 			// Restore original settings
-			await config.update('ideaPath', originalPath, vscode.ConfigurationTarget.Global);
+			await config.update('webstormPath', originalPath, vscode.ConfigurationTarget.Global);
 		}
 	});
 });
